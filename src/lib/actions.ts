@@ -7,11 +7,18 @@ import { db } from '@/lib/db'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { updateHomepageSettings } from './settings'
+import crypto from 'crypto';
+import axios from 'axios';
+
+const PHONEPE_HOST = process.env.PHONEPE_HOST || "https://api-preprod.phonepe.com/apis/pg-sandbox";
+const MERCHANT_ID = process.env.PHONEPE_MERCHANT_ID || "PGTESTPAYUAT";
+const SALT_KEY = process.env.PHONEPE_SALT_KEY || "96434309-7796-489d-8924-ab56988a6076";
+const SALT_INDEX = process.env.PHONEPE_SALT_INDEX || "1";
 
 const checkoutSchema = z.object({
     email: z.string().email({ message: 'Please enter a valid email address.'}),
     shippingAddress: z.string().min(10, 'Please enter a complete shipping address.'),
-    paymentMethod: z.enum(['razorpay', 'upi']),
+    paymentMethod: z.enum(['upi', 'phonepe']),
     cartItems: z.string().min(1, 'Cart cannot be empty.'),
     total: z.coerce.number().min(0.01, 'Total must be valid.'),
 })
@@ -46,11 +53,56 @@ export async function submitOrder(prevState: any, formData: FormData) {
       }
     }
     
-    // In a real app, you would integrate with a payment provider here.
-    // For now, we simulate success and redirect.
-
     if (paymentMethod === 'upi') {
         redirect(`/checkout/upi/${orderId}`);
+    } else if (paymentMethod === 'phonepe') {
+        try {
+            const merchantTransactionId = `MT-${orderId}`;
+            const normalPayLoad = {
+                merchantId: MERCHANT_ID,
+                merchantTransactionId: merchantTransactionId,
+                merchantUserId: `MUID-${orderId}`,
+                amount: Math.round(total * 100), // amount in paise
+                redirectUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/phonepe-callback?orderId=${orderId}`,
+                redirectMode: "REDIRECT",
+                callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/phonepe-callback?orderId=${orderId}`,
+                mobileNumber: "9999999999", // Placeholder, ideally from user data
+                paymentInstrument: {
+                    type: "PAY_PAGE",
+                },
+            };
+
+            const payload = Buffer.from(JSON.stringify(normalPayLoad)).toString("base64");
+            const checksum =
+                crypto.createHash("sha256").update(payload + "/pg/v1/pay" + SALT_KEY).digest("hex") +
+                "###" +
+                SALT_INDEX;
+
+            const response = await axios.post(
+                `${PHONEPE_HOST}/pg/v1/pay`,
+                { request: payload },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-VERIFY": checksum,
+                    },
+                }
+            );
+            
+            if (response.data.success) {
+                redirect(response.data.data.instrumentResponse.redirectInfo.url);
+            } else {
+                console.error("PhonePe API error:", response.data);
+                return {
+                    errors: { form: ['PhonePe payment initiation failed. Please try again.'] }
+                };
+            }
+        } catch (phonepeError) {
+            console.error('PhonePe integration error:', phonepeError);
+            return {
+                errors: { form: ['An error occurred during PhonePe payment. Please try again.'] }
+            };
+        }
     }
     
     redirect(`/order-confirmation/${orderId}`)

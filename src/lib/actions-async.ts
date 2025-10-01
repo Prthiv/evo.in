@@ -21,7 +21,7 @@ import {
 const checkoutSchema = z.object({
     email: z.string().email({ message: 'Please enter a valid email address.'}),
     shippingAddress: z.string().min(10, 'Please enter a complete shipping address.'),
-    paymentMethod: z.enum(['razorpay', 'upi']),
+    paymentMethod: z.enum(['upi', 'phonepe']),
     cartItems: z.string().min(1, 'Cart cannot be empty.'),
     total: z.coerce.number().min(0.01, 'Total must be valid.'),
 })

@@ -6,10 +6,10 @@ import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { OrderStatusTimeline } from "@/components/order-status-timeline";
 import { Button } from "@/components/ui/button";
 import { Package, Truck, Home } from "lucide-react";
 import Link from "next/link";
-import { OrderStatusTimeline } from "@/components/order-status-timeline";
 
 export default function CustomerOrderDetailsPage({ 
     params,

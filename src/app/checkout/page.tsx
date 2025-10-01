@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useActionState, useEffect, useState } from 'react';
@@ -15,6 +14,21 @@ import { CreditCard, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
+type FieldErrors = {
+  email?: string[];
+  shippingAddress?: string[];
+  paymentMethod?: string[];
+  cartItems?: string[];
+  total?: string[];
+  form?: string[]; // Add form to FieldErrors
+};
+
+type SubmitOrderReturn = {
+  errors: FieldErrors;
+};
+
+type SubmitOrderState = SubmitOrderReturn | { errors: {} };
+
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
@@ -28,8 +42,8 @@ function SubmitButton() {
 export default function CheckoutPage() {
   const { itemsCount, bundles, total, clearCart } = useCart();
   const router = useRouter();
-  const [state, formAction] = useActionState(submitOrder, { errors: {} });
-  const [paymentMethod, setPaymentMethod] = useState('razorpay');
+  const [state, formAction] = useActionState<SubmitOrderState, FormData>(submitOrder, { errors: {} });
+  const [paymentMethod, setPaymentMethod] = useState('phonepe');
 
   useEffect(() => {
     if (itemsCount === 0) {
@@ -43,7 +57,7 @@ export default function CheckoutPage() {
     // but a successful submission results in a redirect, so the
     // `state.errors` will be empty on the next render before redirect.
     // If we're here and there are no errors, it's time to clear the cart.
-    if (Object.keys(state.errors).length === 0 && !state.errors.form) {
+    if (state && Object.keys(state.errors).length === 0) {
       clearCart();
     }
   }, [state, clearCart]);
@@ -69,12 +83,12 @@ export default function CheckoutPage() {
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
               <Input id="email" name="email" type="email" placeholder="you@example.com" required />
-              {state.errors?.email && <p className="text-sm text-destructive">{state.errors.email[0]}</p>}
+              {state.errors && 'email' in state.errors && state.errors.email && <p className="text-sm text-destructive">{state.errors.email[0]}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="shippingAddress">Shipping Address</Label>
               <Textarea id="shippingAddress" name="shippingAddress" placeholder="123 Main St, Anytown, USA 12345" required />
-              {state.errors?.shippingAddress && <p className="text-sm text-destructive">{state.errors.shippingAddress[0]}</p>}
+              {state.errors && 'shippingAddress' in state.errors && state.errors.shippingAddress && <p className="text-sm text-destructive">{state.errors.shippingAddress[0]}</p>}
             </div>
 
             <div className="space-y-4">
@@ -84,25 +98,26 @@ export default function CheckoutPage() {
                 <Label
                   className="flex items-center space-x-3 rounded-md border p-4 cursor-pointer has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary"
                 >
-                  <RadioGroupItem value="razorpay" id="razorpay" />
-                  <span className="font-medium">Razorpay / Card / etc.</span>
+                  <RadioGroupItem value="upi" id="upi" />
+                  <span className="font-medium">UPI</span>
                 </Label>
                 <Label
                   className="flex items-center space-x-3 rounded-md border p-4 cursor-pointer has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary"
                 >
-                  <RadioGroupItem value="upi" id="upi" />
-                  <span className="font-medium">UPI</span>
+                  <RadioGroupItem value="phonepe" id="phonepe" />
+                  <span className="font-medium">PhonePe</span>
                 </Label>
               </RadioGroup>
+              {state.errors && 'paymentMethod' in state.errors && state.errors.paymentMethod && <p className="text-sm text-destructive">{state.errors.paymentMethod[0]}</p>}
             </div>
 
-             {state.errors?.form && (
+             {state.errors && 'form' in state.errors && state.errors.form && (
                 <Alert variant="destructive">
                     <AlertTitle>Error</AlertTitle>
                     <AlertDescription>{state.errors.form[0]}</AlertDescription>
                 </Alert>
             )}
-            {state.errors?.cartItems && (
+            {state.errors && 'cartItems' in state.errors && state.errors.cartItems && (
                 <Alert variant="destructive">
                     <AlertTitle>Error</AlertTitle>
                     <AlertDescription>{state.errors.cartItems[0]}</AlertDescription>
