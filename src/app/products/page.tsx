@@ -1,16 +1,18 @@
 
-import { getAllProducts } from "@/lib/data-async";
-import { ProductCard } from "@/components/product-card";
-import { Categories } from "@/components/components/categories";
-import { CuratedBundles } from "@/components/curated-bundles";
-import { SelectionTray } from "@/components/selection-tray";
+import { getAllProducts } from '@/lib/data-async';
+import { Categories } from '@/components/categories';
+import { CuratedBundles } from '@/components/curated-bundles';
+import { ProductCard } from '@/components/product-card';
+import { SelectionTray } from '@/components/selection-tray';
+
+export const revalidate = 0;
 
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ category?: string }>;
+  searchParams?: { category?: string };
 }) {
-  const resolvedSearchParams = await searchParams;
+  const resolvedSearchParams = searchParams;
   const currentCategory = resolvedSearchParams?.category;
   const allProducts = await getAllProducts();
 

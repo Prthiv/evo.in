@@ -2,6 +2,7 @@ import 'server-only';
 
 import type { Product, ProductFromDB, Order, OrderFromDB } from '@/lib/types';
 import { dbManager } from './db-async';
+import { revalidatePath } from 'next/cache';
 
 function transformProduct(product: ProductFromDB): Product {
     let imageUrls: string[] = [];
@@ -222,6 +223,8 @@ export async function createProduct(productData: {
             productData.isTrending ? 1 : 0
         );
         
+        revalidatePath('/');
+        revalidatePath('/products');
         return { success: true, id: result.lastInsertRowid?.toString() };
     } catch (error) {
         console.error('Failed to create product:', error);
@@ -262,6 +265,8 @@ export async function updateProduct(id: string, productData: {
             id
         );
         
+        revalidatePath('/');
+        revalidatePath('/products');
         return { success: true };
     } catch (error) {
         console.error('Failed to update product:', error);
@@ -275,6 +280,8 @@ export async function deleteProduct(id: string): Promise<{ success: boolean; err
         const stmt = db.prepare('DELETE FROM products WHERE id = ?');
         stmt.run(id);
         
+        revalidatePath('/');
+        revalidatePath('/products');
         return { success: true };
     } catch (error) {
         console.error('Failed to delete product:', error);
