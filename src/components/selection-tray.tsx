@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useSelection } from "@/hooks/use-selection.tsx";
+import { useSelection } from "@/hooks/use-selection";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { BUNDLE_DEALS, MIN_ORDER_QUANTITY } from "@/lib/constants";
@@ -24,7 +24,7 @@ export function SelectionTray() {
             description: `Your bundle with ${selectionCount} posters has been added to your cart.`
         })
         clearSelection();
-        router.push('/cart');
+        router.push('/edit-bundle');
     }
 
     if (selectionCount === 0) {

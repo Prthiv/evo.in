@@ -33,7 +33,7 @@ export function EditBundlePageClient({ products, bundleId }: EditBundlePageClien
     const { getBundleById, updateBundle, removeBundle } = useCart();
     
     // We use the global selection hook to manage items on this page
-    const { selectedItems, setSelectedItems, isSelected, toggleSelection } = useSelection();
+    const { selectedItems, setSelectedItems, isSelected, toggleSelection, selectionCount } = useSelection();
     
     // Memoize the bundle to prevent re-fetching on every render
     const bundle = useMemo(() => getBundleById(bundleId as string), [bundleId, getBundleById]);
@@ -41,7 +41,7 @@ export function EditBundlePageClient({ products, bundleId }: EditBundlePageClien
     // Effect to initialize the selected items from the cart bundle
     useEffect(() => {
         if (bundle) {
-            setSelectedItems(bundle.items.map(i => i.product));
+            setSelectedItems(bundle.items.map(i => ({ ...i.product, quantity: i.quantity })));
         } else {
              // If bundle not found, redirect after a short delay
             const timer = setTimeout(() => router.push('/cart'), 500);
@@ -115,7 +115,7 @@ export function EditBundlePageClient({ products, bundleId }: EditBundlePageClien
                     <AlertTriangle className="h-4 w-4" />
                     <AlertTitle>Minimum Not Met</AlertTitle>
                     <AlertDescription>
-                        A bundle must contain at least {MIN_ORDER_QUANTITY} posters. Please add {MIN_ORDER_QUANTITY - selectedItems.length} more.
+                        A bundle must contain at least {MIN_ORDER_QUANTITY} items. Please add {MIN_ORDER_QUANTITY - selectionCount} more.
                     </AlertDescription>
                 </Alert>
             )}

@@ -33,10 +33,15 @@ export interface Product {
   isTrending?: boolean;
 }
 
+export interface SelectedProduct extends Product {
+  quantity: number;
+}
+
 export interface CartItem {
   id: string; // Unique within a bundle, e.g. `bundleId-productId-index`
   product: Product; // Can be a standard product or a generated one for custom items
-  quantity: 1; // Always 1 in the new model
+  quantity: number; // Dynamic quantity
+
   posterSize: PosterSize;
   frame?: FrameOption;
   isFree: boolean;
@@ -48,6 +53,7 @@ export interface CustomCartItemInput {
     previewUrl: string;
     posterSize: PosterSize;
     isFramed: boolean;
+    quantity: number;
 }
 
 export interface CartBundle {

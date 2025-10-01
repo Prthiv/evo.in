@@ -2,14 +2,14 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import type { CartItem, Product, FrameOption, PosterSize, CartBundle, BundleDeal, CustomCartItemInput } from '@/lib/types';
+import type { CartItem, Product, FrameOption, PosterSize, CartBundle, BundleDeal, CustomCartItemInput, SelectedProduct } from '@/lib/types';
 import { BUNDLE_DEALS, MIN_ORDER_QUANTITY, POSTER_SIZES, FRAME_OPTIONS } from '@/lib/constants';
 
 interface CartContextType {
   bundles: CartBundle[];
-  addBundleToCart: (products: Product[], posterSize: PosterSize, frame?: FrameOption) => void;
+  addBundleToCart: (products: SelectedProduct[], posterSize: PosterSize, frame?: FrameOption) => void;
   addCustomBundleToCart: (customItems: CustomCartItemInput[]) => void;
-  updateBundle: (bundleId: string, items: Product[], posterSize: PosterSize, frame?: FrameOption) => void;
+  updateBundle: (bundleId: string, items: SelectedProduct[], posterSize: PosterSize, frame?: FrameOption) => void;
   removeBundle: (bundleId: string) => void;
   clearCart: () => void;
   getBundleById: (bundleId: string) => CartBundle | undefined;
@@ -33,11 +33,12 @@ const getItemPrice = (item: Pick<CartItem, 'posterSize' | 'frame'>): number => {
 const calculateBundle = (items: CartItem[]) => {
   const sortedDeals = [...BUNDLE_DEALS].sort((a, b) => b.buy - a.buy);
   let appliedDeal: BundleDeal | null = null;
+  let totalItemsInBundle = items.reduce((acc, item) => acc + item.quantity, 0);
   let freeItemsCount = 0;
 
-  if (items.length >= MIN_ORDER_QUANTITY) {
+  if (totalItemsInBundle >= MIN_ORDER_QUANTITY) {
     for (const deal of sortedDeals) {
-      if (items.length >= deal.buy) {
+      if (totalItemsInBundle >= deal.buy) {
         freeItemsCount = deal.get;
         appliedDeal = deal;
         break;
@@ -48,19 +49,26 @@ const calculateBundle = (items: CartItem[]) => {
   const itemsWithStatus = items.map(item => ({ ...item, isFree: false }));
 
   if (freeItemsCount > 0) {
-    const sortedItems = [...itemsWithStatus].sort((a, b) => a.price - b.price);
+    // Create a flattened list of all individual items, considering their quantities
+    const allIndividualItems = itemsWithStatus.flatMap(item => 
+      Array(item.quantity).fill({ ...item, quantity: 1 })
+    );
+    
+    const sortedIndividualItems = [...allIndividualItems].sort((a, b) => a.price - b.price);
+    
     for (let i = 0; i < freeItemsCount; i++) {
-        if(sortedItems[i]) {
-            const freeItem = itemsWithStatus.find(item => item.id === sortedItems[i].id);
-            if (freeItem) {
-                freeItem.isFree = true;
+        if(sortedIndividualItems[i]) {
+            // Mark the original item as free if it corresponds to one of the cheapest individual items
+            const originalItem = itemsWithStatus.find(item => item.id === sortedIndividualItems[i].id);
+            if (originalItem) {
+                originalItem.isFree = true;
             }
         }
     }
   }
   
-  const subtotal = itemsWithStatus.reduce((acc, item) => acc + item.price, 0);
-  const total = itemsWithStatus.reduce((acc, item) => acc + (item.isFree ? 0 : item.price), 0);
+  const subtotal = itemsWithStatus.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const total = itemsWithStatus.reduce((acc, item) => acc + (item.isFree ? 0 : (item.price * item.quantity)), 0);
   const discount = subtotal - total;
 
   return { items: itemsWithStatus, subtotal, total, discount, appliedDeal };
@@ -86,16 +94,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('evo.in-cart-bundles', JSON.stringify(bundles));
   }, [bundles]);
 
-  const addBundleToCart = (products: Product[], posterSize: PosterSize, frame?: FrameOption) => {
+  const addBundleToCart = (products: SelectedProduct[], posterSize: PosterSize, frame?: FrameOption) => {
     setBundles(prevBundles => {
       const bundleId = `bundle-${Date.now()}`;
       const name = `Custom Bundle ${prevBundles.length + 1}`;
       
-      let initialItems: CartItem[] = products.map((product, index) => {
-        const item: Omit<CartItem, 'id' | 'price' | 'isFree'> = { product, quantity: 1, posterSize, frame };
+      let initialItems: CartItem[] = products.map((selectedProduct, index) => {
+        const item: Omit<CartItem, 'id' | 'price' | 'isFree'> = { product: selectedProduct, quantity: selectedProduct.quantity, posterSize, frame };
         return {
           ...item,
-          id: `${bundleId}-item-${product.id}-${index}`,
+          id: `${bundleId}-item-${selectedProduct.id}-${index}`,
           price: getItemPrice(item),
           isFree: false,
         };
@@ -127,7 +135,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 tags: ['custom'],
             };
 
-            const item: Omit<CartItem, 'id' | 'price' | 'isFree'> = { product, quantity: 1, posterSize: customItem.posterSize, frame };
+            const item: Omit<CartItem, 'id' | 'price' | 'isFree'> = { product, quantity: customItem.quantity || 1, posterSize: customItem.posterSize, frame };
             return {
                 ...item,
                 id: `${bundleId}-item-${product.id}-${index}`,
@@ -144,15 +152,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 };
 
 
-  const updateBundle = (bundleId: string, products: Product[], posterSize: PosterSize, frame?: FrameOption) => {
+  const updateBundle = (bundleId: string, products: SelectedProduct[], posterSize: PosterSize, frame?: FrameOption) => {
     setBundles(prevBundles => {
       return prevBundles.map(bundle => {
         if (bundle.id === bundleId) {
-           let newItems: CartItem[] = products.map((product, index) => {
-            const item: Omit<CartItem, 'id' | 'price'| 'isFree'> = { product, quantity: 1, posterSize, frame };
+           let newItems: CartItem[] = products.map((selectedProduct, index) => {
+            const item: Omit<CartItem, 'id' | 'price'| 'isFree'> = { product: selectedProduct, quantity: selectedProduct.quantity, posterSize, frame };
             return {
               ...item,
-              id: `${bundleId}-item-${product.id}-${index}`,
+              id: `${bundleId}-item-${selectedProduct.id}-${index}`,
               price: getItemPrice(item),
               isFree: false,
             };
@@ -183,7 +191,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         acc.subtotal += bundle.subtotal;
         acc.total += bundle.total;
         acc.totalDiscount += bundle.discount;
-        acc.itemsCount += bundle.items.length;
+        acc.itemsCount += bundle.items.reduce((sum, item) => sum + item.quantity, 0);
         // For simplicity, we take the applied deal from the first bundle.
         // In a multi-bundle scenario, this might need more complex logic.
         if (!acc.appliedDeal && bundle.appliedDeal) {
@@ -196,7 +204,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [bundles]);
 
   const bundleCount = bundles.length;
-  const isMinOrderMet = bundles.every(b => b.items.length >= MIN_ORDER_QUANTITY) || bundles.length === 0;
+  const isMinOrderMet = itemsCount >= MIN_ORDER_QUANTITY;
 
   return (
     <CartContext.Provider value={{ 

@@ -16,7 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Check, Truck, PackagePlus, ShoppingBag } from 'lucide-react';
 import { QuantitySelector } from '@/components/quantity-selector';
 import { useEffect, useState } from 'react';
-import type { Product } from '@/lib/types';
+import type { Product, SelectedProduct } from '@/lib/types';
 
 export function ProductDetailPageClient({ product }: { product: Product }) {
   const router = useRouter();
@@ -39,10 +39,10 @@ export function ProductDetailPageClient({ product }: { product: Product }) {
   } = useProductOptions();
 
   const handleBuyNow = () => {
-    addBundleToCart([product], "A4", undefined);
+    addBundleToCart([{ ...product, quantity: quantity } as SelectedProduct], selectedPosterSize, selectedFrame);
     toast({
       title: "Added to Cart",
-      description: `A bundle with ${product.name} has been created.`,
+      description: `A bundle with ${quantity}x ${product.name} has been created.`,
     });
     router.push('/cart');
   };
@@ -129,6 +129,7 @@ export function ProductDetailPageClient({ product }: { product: Product }) {
           )}
 
           <div className="flex flex-col sm:flex-row gap-4">
+            <QuantitySelector quantity={quantity} setQuantity={setQuantity} min={1} />
             <Button size="lg" className="flex-1" onClick={handleBuyNow}>
               <ShoppingBag className="mr-2 h-5 w-5" /> Buy Now
             </Button>

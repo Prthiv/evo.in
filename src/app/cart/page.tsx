@@ -7,16 +7,27 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import Link from "next/link";
-import { CreditCard, ShoppingCart, Pencil, PackagePlus, AlertTriangle, BadgePercent } from "lucide-react";
+import { CreditCard, ShoppingCart, Pencil, PackagePlus, AlertTriangle, BadgePercent, Trash2 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { MIN_ORDER_QUANTITY } from "@/lib/constants";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function CartPage() {
-  const { bundles, total, bundleCount, subtotal, totalDiscount, clearCart, appliedDeal } = useCart();
+  const { bundles, total, bundleCount, subtotal, totalDiscount, clearCart, appliedDeal, removeBundle } = useCart();
   
   const minOrderPerBundle = bundles.some(bundle => bundle.items.length < MIN_ORDER_QUANTITY);
-
+  
   return (
     <div className="container py-12">
       <div className="mb-8 flex justify-between items-center">
@@ -46,7 +57,7 @@ export default function CartPage() {
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>Minimum Order Not Met</AlertTitle>
                 <AlertDescription>
-                  One of your bundles has fewer than {MIN_ORDER_QUANTITY} posters. Please edit the bundle to proceed to checkout.
+                  One of your bundles has fewer than {MIN_ORDER_QUANTITY} items. Please edit the bundle to proceed to checkout.
                 </AlertDescription>
               </Alert>
             )}
@@ -104,6 +115,25 @@ export default function CartPage() {
                                 <Pencil className="mr-2 h-4 w-4" /> Edit Bundle
                             </Link>
                         </Button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="destructive" className="w-full mt-2">
+                                    <Trash2 className="mr-2 h-4 w-4" /> Delete Bundle
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete this bundle from your cart.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => removeBundle(bundle.id)}>Continue</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </AccordionContent>
                    </Card>
                 </AccordionItem>

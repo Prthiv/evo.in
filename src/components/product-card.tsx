@@ -7,9 +7,10 @@ import type { Product } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { POSTER_SIZES } from '@/lib/constants';
 import { CheckCircle, Eye, PlusCircle } from 'lucide-react';
-import { useSelection } from '@/hooks/use-selection.tsx';
+import { useSelection } from '@/hooks/use-selection';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
+import { QuantitySelector } from './quantity-selector';
 
 interface ProductCardProps {
   product: Product;
@@ -18,8 +19,9 @@ interface ProductCardProps {
 
 export function ProductCard({ product, children }: ProductCardProps) {
   const basePrice = POSTER_SIZES.A4.price;
-  const { isSelected, toggleSelection } = useSelection();
+  const { isSelected, toggleSelection, updateQuantity, selectedItems } = useSelection();
   const selected = isSelected(product.id);
+  const currentQuantity = selectedItems.find(item => item.id === product.id)?.quantity || 1;
 
   const handleSelect = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -59,7 +61,7 @@ export function ProductCard({ product, children }: ProductCardProps) {
              <div className={cn("absolute top-2 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-background/80 text-foreground transition-all duration-300 z-20",
                 selected ? "opacity-100" : "opacity-0 group-hover:opacity-100",
              )}>
-                {selected ? <CheckCircle className="h-5 w-5 text-primary" /> : <PlusCircle className="h-5 w-5" />}
+                {selected ? <CheckCircle className="h-5 w-5" /> : <PlusCircle className="h-5 w-5" />}
             </div>
           </div>
           <Link href={`/products/${product.slug}`} className="p-4 flex-1 flex flex-col justify-between" onClick={handleTextClick}>
@@ -69,6 +71,14 @@ export function ProductCard({ product, children }: ProductCardProps) {
             </div>
             <p className="mt-2 font-semibold text-base">From ₹{basePrice.toFixed(2)}</p>
           </Link>
+          {selected && (
+            <div className="p-4 pt-0">
+              <QuantitySelector
+                quantity={currentQuantity}
+                setQuantity={(qty) => updateQuantity(product.id, qty)}
+              />
+            </div>
+          )}
           {children}
         </CardContent>
       </Card>

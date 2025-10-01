@@ -1,16 +1,18 @@
 
 'use client'
 
-import React, { createContext, useContext, useState, useMemo } from 'react';
-import type { Product, BundleDeal } from '@/lib/types';
+import { createContext, useContext, useState, useMemo } from 'react';
+import type { Product, BundleDeal, SelectedProduct } from '@/lib/types';
 import { BUNDLE_DEALS, MIN_ORDER_QUANTITY } from '@/lib/constants';
 
 interface SelectionContextType {
-  selectedItems: Product[];
-  setSelectedItems: React.Dispatch<React.SetStateAction<Product[]>>;
+  selectedItems: SelectedProduct[];
+  setSelectedItems: React.Dispatch<React.SetStateAction<SelectedProduct[]>>;
   toggleSelection: (product: Product) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
   isSelected: (productId: string) => boolean;
   clearSelection: () => void;
+  removeItemFromSelection: (productId: string) => void;
   selectionCount: number;
   nextDeal: { buy: number; get: number, total: number } | null;
 }
@@ -18,17 +20,29 @@ interface SelectionContextType {
 const SelectionContext = createContext<SelectionContextType | undefined>(undefined);
 
 export const SelectionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [selectedItems, setSelectedItems] = useState<Product[]>([]);
+  const [selectedItems, setSelectedItems] = useState<SelectedProduct[]>([]);
 
   const toggleSelection = (product: Product) => {
     setSelectedItems(prev => {
-      const isAlreadySelected = prev.some(item => item.id === product.id);
-      if (isAlreadySelected) {
+      const existingItem = prev.find(item => item.id === product.id);
+      if (existingItem) {
         return prev.filter(item => item.id !== product.id);
       } else {
-        return [...prev, product];
+        return [...prev, { ...product, quantity: 1 }];
       }
     });
+  };
+
+  const updateQuantity = (productId: string, quantity: number) => {
+    setSelectedItems(prev =>
+      prev.map(item =>
+        item.id === productId ? { ...item, quantity: Math.max(1, quantity) } : item
+      )
+    );
+  };
+
+  const removeItemFromSelection = (productId: string) => {
+    setSelectedItems(prev => prev.filter(item => item.id !== productId));
   };
 
   const isSelected = (productId: string) => {
@@ -39,7 +53,9 @@ export const SelectionProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setSelectedItems([]);
   };
 
-  const selectionCount = selectedItems.length;
+  const selectionCount = useMemo(() => {
+    return selectedItems.reduce((sum, item) => sum + item.quantity, 0);
+  }, [selectedItems]);
 
   const nextDeal = useMemo(() => {
     const sortedDeals = [...BUNDLE_DEALS].sort((a,b) => a.buy - b.buy);
@@ -57,7 +73,7 @@ export const SelectionProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   
 
   return (
-    <SelectionContext.Provider value={{ selectedItems, setSelectedItems, toggleSelection, isSelected, clearSelection, selectionCount, nextDeal }}>
+    <SelectionContext.Provider value={{ selectedItems, setSelectedItems, toggleSelection, updateQuantity, isSelected, clearSelection, removeItemFromSelection, selectionCount, nextDeal }}>
       {children}
     </SelectionContext.Provider>
   );
