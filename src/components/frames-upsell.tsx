@@ -8,7 +8,9 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 export function FramesUpsell() {
-    const image = PlaceHolderImages.find(i => i.id === 'frames-upsell');
+    // const image = PlaceHolderImages.find(i => i.id === 'frames-upsell');
+    const imageUrl = '/uploads/Screenshot 2025-10-01 210229.png';
+    const imageAlt = 'Custom Frames Upsell';
 
     return (
         <section className="bg-secondary/50">
@@ -31,11 +33,10 @@ export function FramesUpsell() {
                     </Button>
                 </div>
                 <div className="relative aspect-square">
-                    {image && (
+                    {imageUrl && (
                         <Image 
-                            src={image.imageUrl}
-                            alt={image.description}
-                            data-ai-hint={image.imageHint}
+                            src={imageUrl}
+                            alt={imageAlt}
                             fill
                             className="object-cover rounded-lg shadow-xl"
                         />

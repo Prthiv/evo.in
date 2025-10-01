@@ -1,12 +1,12 @@
 
 import type { Metadata } from 'next';
 import './globals.css';
-import { CartProvider } from '@/hooks/use-cart.tsx';
+import { CartProvider } from '@/hooks/use-cart';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/layout/header';
 import { Inter, Poppins } from 'next/font/google';
-import { SelectionProvider } from '@/hooks/use-selection.tsx';
+import { SelectionProvider } from '@/hooks/use-selection';
 import { Footer } from '@/components/layout/footer';
 
 const fontSans = Inter({
@@ -17,7 +17,6 @@ const fontSans = Inter({
 const fontSerif = Poppins({
   subsets: ['latin'],
   weight: ['400', '600', '700', '800'],
-  variable: '--font-serif',
 });
 
 
@@ -36,8 +35,7 @@ export default function RootLayout({
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
-          fontSans.variable,
-          fontSerif.variable
+          fontSans.variable
         )}
       >
         <CartProvider>

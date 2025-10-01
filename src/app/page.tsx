@@ -30,15 +30,8 @@ export default async function Home() {
   return (
     <div className="flex flex-col space-y-16 md:space-y-24">
       <HeroSection settings={heroSettings} />
-      
-      <ScrollAnimator>
-        <MegaDeals settings={megaDealsSettings} />
-      </ScrollAnimator>
+      <MegaDeals settings={megaDealsSettings} />
 
-      <ScrollAnimator>
-        <Categories />
-      </ScrollAnimator>
-      
       <ScrollAnimator>
         <TrendingPosters trendingProducts={trendingProducts} />
       </ScrollAnimator>
