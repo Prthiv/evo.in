@@ -1,6 +1,6 @@
 
-import { ProductForm } from "@/components/admin/product-form";
-import { getProductById } from "@/lib/data";
+import { EnhancedProductForm } from "@/components/admin/enhanced-product-form";
+import { getProductById } from "@/lib/data-async";
 import { notFound } from "next/navigation";
 import {
   Card,
@@ -10,8 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function EditProductPage({ params }: { params: { id: string } }) {
-  const product = getProductById(params.id);
+export default async function EditProductPage({ params }: { params: { id: string } }) {
+  const product = await getProductById(params.id);
 
   if (!product) {
     notFound();
@@ -26,7 +26,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ProductForm product={product} />
+        <EnhancedProductForm product={product} />
       </CardContent>
     </Card>
   );

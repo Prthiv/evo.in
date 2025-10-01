@@ -1,5 +1,5 @@
 
-import { getAllProducts } from "@/lib/data";
+import { getAllProducts } from "@/lib/data-async";
 import { ProductsTable } from "@/components/admin/products-table";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
@@ -12,8 +12,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function StudioProductsPage() {
-  const products = getAllProducts();
+export default async function StudioProductsPage() {
+  const products = await getAllProducts();
   return (
     <Card>
       <CardHeader>

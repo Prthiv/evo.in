@@ -1,17 +1,18 @@
 
-import { getAllProducts } from "@/lib/data";
+import { getAllProducts } from "@/lib/data-async";
 import { ProductCard } from "@/components/product-card";
 import { Categories } from "@/components/components/categories";
 import { CuratedBundles } from "@/components/curated-bundles";
 import { SelectionTray } from "@/components/selection-tray";
 
-export default function ProductsPage({
+export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams?: { category?: string };
+  searchParams?: Promise<{ category?: string }>;
 }) {
-  const currentCategory = searchParams?.category;
-  const allProducts = getAllProducts();
+  const resolvedSearchParams = await searchParams;
+  const currentCategory = resolvedSearchParams?.category;
+  const allProducts = await getAllProducts();
 
   const filteredProducts = currentCategory
     ? allProducts.filter((p) => p.category === currentCategory)

@@ -35,7 +35,7 @@ import { Button } from '@/components/ui/button';
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import type { Product } from '@/lib/types';
 import { Checkbox } from '../ui/checkbox';
-import { deleteProduct } from '@/lib/actions';
+import { deleteProduct } from '@/lib/actions-async';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProductsTableProps {

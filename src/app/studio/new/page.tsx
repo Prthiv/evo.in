@@ -1,5 +1,5 @@
 
-import { ProductForm } from "@/components/admin/product-form";
+import { EnhancedProductForm } from "@/components/admin/enhanced-product-form";
 import {
   Card,
   CardContent,
@@ -18,7 +18,7 @@ export default function NewProductPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ProductForm />
+        <EnhancedProductForm />
       </CardContent>
     </Card>
   );

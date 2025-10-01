@@ -4,7 +4,7 @@
 import { useActionState, useState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { upsertProduct } from '@/lib/actions';
+import { upsertProduct } from '@/lib/actions-async';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';

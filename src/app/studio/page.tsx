@@ -1,5 +1,5 @@
 
-import { getDashboardData } from '@/lib/data';
+import { getDashboardData } from '@/lib/data-async';
 import { StudioPageClient } from '@/components/admin/studio-page-client';
 
 export default async function StudioPage() {

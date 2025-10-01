@@ -9,12 +9,12 @@ import { FramesUpsell } from "@/components/frames-upsell";
 import { FooterCTA } from "@/components/footer-cta";
 import { Footer } from "@/components/layout/footer";
 import { ReelsShowcase } from "@/components/reels-showcase";
-import { getAllProducts } from "@/lib/data";
-import { getHomepageSettings } from "@/lib/settings";
+import { getAllProducts } from "@/lib/data-async";
+import { getHomepageSettings } from "@/lib/settings-async";
 import type { HeroSettings, MegaDealSettings } from "@/lib/types";
 
 export default async function Home() {
-  const allProducts = getAllProducts();
+  const allProducts = await getAllProducts();
   const trendingProducts = allProducts.filter(p => p.isTrending);
 
   const heroSettings = await getHomepageSettings<HeroSettings>('hero', {

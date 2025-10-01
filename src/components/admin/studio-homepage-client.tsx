@@ -13,7 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { Save, Trash2, PlusCircle, Video, Image as ImageIcon, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import type { Product, HeroSettings, MegaDealSettings } from '@/lib/types';
-import { updateHeroSettings, updateMegaDeals, updateTrendingProducts, updateReels } from '@/lib/actions';
+import { updateHeroSettingsAction, updateMegaDealsAction, updateTrendingProductsAction, updateReelsAction } from '@/lib/actions-async';
 import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Checkbox } from '../ui/checkbox';
@@ -65,7 +65,7 @@ export function StudioHomepageClient({ products, heroData, megaDeals, reels: def
     const { toast } = useToast();
 
     // --- Hero Section Form ---
-    const [heroState, heroAction] = useActionState(updateHeroSettings, { success: false, errors: {} });
+    const [heroState, heroAction] = useActionState(updateHeroSettingsAction, { success: false, errors: {} });
      useEffect(() => {
         if (heroState.success) {
             toast({ title: "Hero Section Updated!", description: "Your changes have been saved." });
@@ -83,7 +83,7 @@ export function StudioHomepageClient({ products, heroData, megaDeals, reels: def
         control: dealsForm.control,
         name: "deals"
     });
-    const [dealsState, dealsAction] = useActionState(updateMegaDeals, { success: false, errors: {} });
+    const [dealsState, dealsAction] = useActionState(updateMegaDealsAction, { success: false, errors: {} });
      useEffect(() => {
         if (dealsState.success) {
             toast({ title: "Mega Deals Updated!", description: "Your changes have been saved." });
@@ -106,7 +106,7 @@ export function StudioHomepageClient({ products, heroData, megaDeals, reels: def
         control: reelsForm.control,
         name: "reels"
     });
-    const [reelsState, reelsAction] = useActionState(updateReels, { success: false, errors: {} });
+    const [reelsState, reelsAction] = useActionState(updateReelsAction, { success: false, errors: {} });
     useEffect(() => {
         if (reelsState.success) {
             toast({ title: "Reels Showcase Updated!", description: "Your changes have been saved." });
@@ -119,7 +119,7 @@ export function StudioHomepageClient({ products, heroData, megaDeals, reels: def
     }
 
     // --- Trending Products Form ---
-    const [trendingState, trendingAction] = useActionState(updateTrendingProducts, { success: false, errors: {} });
+    const [trendingState, trendingAction] = useActionState(updateTrendingProductsAction, { success: false, errors: {} });
     useEffect(() => {
         if (trendingState.success) {
             toast({ title: "Trending Products Updated!", description: "Your changes have been saved." });

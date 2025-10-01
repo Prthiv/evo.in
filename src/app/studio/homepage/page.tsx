@@ -1,11 +1,11 @@
 
-import { getAllProducts } from "@/lib/data";
-import { getHomepageSettings } from "@/lib/settings";
-import { StudioHomepageClient } from "@/components/admin/studio-homepage-client";
+import { getAllProducts } from "@/lib/data-async";
+import { getHomepageSettings } from "@/lib/settings-async";
+import { EnhancedStudioHomepageClient } from "@/components/admin/enhanced-studio-homepage-client";
 import type { HeroSettings, MegaDealSettings } from "@/lib/types";
 
 export default async function StudioHomepagePage() {
-    const products = getAllProducts();
+    const products = await getAllProducts();
     
     const heroData = await getHomepageSettings<HeroSettings>('hero', {
         headline: 'Art That Defines You',
@@ -20,7 +20,7 @@ export default async function StudioHomepagePage() {
 
 
   return (
-    <StudioHomepageClient
+    <EnhancedStudioHomepageClient
         products={products}
         heroData={heroData}
         megaDeals={megaDeals}
