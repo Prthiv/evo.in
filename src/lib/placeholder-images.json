@@ -1,0 +1,190 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero",
+      "description": "Hero image for the homepage",
+      "imageUrl": "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxncmFkaWVudCUyMGFic3RyYWN0fGVufDB8fHx8MTc2MDQwMDIyNHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gradient abstract"
+    },
+    {
+      "id": "hero-bg-1",
+      "description": "Lifestyle image of posters on a wall",
+      "imageUrl": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxnYWxsZXJ5JTIwd2FsbHxlbnwwfHx8fDE3NTkwNTY1OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gallery wall"
+    },
+    {
+      "id": "hero-frames",
+      "description": "Hero image for the frames slide",
+      "imageUrl": "https://images.unsplash.com/photo-1549492423-400259a21914?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNXx8cGljdHVyZSUyMGZyYW1lJTIwbW9ja3VwfGVufDB8fHx8MTc2MDM5MzcwMXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "frame mockup"
+    },
+    {
+      "id": "frames-upsell",
+      "description": "Image for the frames upsell section",
+      "imageUrl": "https://images.unsplash.com/photo-1542295428-990adef20a59?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwaWN0dXJlJTIwZnJhbWUlMjBsaWZlc3R5bGV8ZW58MHx8fHwxNzYwNDAwNzY0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "picture frame lifestyle"
+    },
+    {
+      "id": "avatar1",
+      "description": "Avatar for first testimonial",
+      "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMHdvbWFufGVufDB8fHx8MTc2MDM5MzM3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "avatar2",
+      "description": "Avatar for second testimonial",
+      "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjAzOTMzNzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "avatar3",
+      "description": "Avatar for third testimonial",
+      "imageUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwb3J0cmFpdCUyMHdvbWFufGVufDB8fHx8MTc2MDM5MzM3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman smile"
+    },
+    {
+      "id": "avatar4",
+      "description": "Avatar for fourth testimonial",
+      "imageUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjAzOTMzNzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man smiling"
+    },
+    {
+      "id": "bundle1",
+      "description": "Image for the first curated bundle",
+      "imageUrl": "https://images.unsplash.com/photo-1611566026373-c6c8da0ea861?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjYXIlMjByYWNlfGVufDB8fHx8MTc1OTA1NjU5NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "car race"
+    },
+    {
+      "id": "bundle2",
+      "description": "Image for the second curated bundle",
+      "imageUrl": "https://images.unsplash.com/photo-1719837296146-bb32b03f442d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxhbmltZSUyMGZpZ2h0fGVufDB8fHx8MTc1ODk5MDI0M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "anime fight"
+    },
+    {
+      "id": "bundle3",
+      "description": "Image for the third curated bundle",
+      "imageUrl": "https://images.unsplash.com/photo-1754677315657-b6c9cf2650ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxoZXJvJTIwcG9zZXxlbnwwfHx8fDE3NTkwNTY1OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hero pose"
+    },
+    {
+      "id": "jdm1-1",
+      "description": "Main image for Cosmic Drift JDM",
+      "imageUrl": "https://images.unsplash.com/photo-1619864066877-926b1c1d5a1a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjYXIlMjBkcmlmdHxlbnwwfHx8fDE3NTkwNTY1OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "car drift"
+    },
+    {
+      "id": "jdm1-2",
+      "description": "Detail image for Cosmic Drift JDM",
+      "imageUrl": "https://images.unsplash.com/photo-1681166583609-a26c2f5d1742?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxhYnN0cmFjdCUyMGNhcnxlbnwwfHx8fDE3NTkwNTY1OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract car"
+    },
+    {
+      "id": "anime1-1",
+      "description": "Main image for Titan Slayer",
+      "imageUrl": "https://images.unsplash.com/photo-1683979856005-679c7e57dc76?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxhbmltZSUyMHdhcnJpb3J8ZW58MHx8fHwxNzU5MDQyNDY5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "anime warrior"
+    },
+    {
+      "id": "anime1-2",
+      "description": "Detail image for Titan Slayer",
+      "imageUrl": "https://images.unsplash.com/photo-1598669266459-eef1467c15be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmYW50YXN5JTIwYmF0dGxlfGVufDB8fHx8MTc1ODk2MjE2Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fantasy battle"
+    },
+    {
+      "id": "superhero1-1",
+      "description": "Main image for Metropolis Guardian",
+      "imageUrl": "https://images.unsplash.com/photo-1758599543113-9857a0f0681c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3VwZXJoZXJvJTIwY2l0eXxlbnwwfHx8fDE3NTkwMDIyMzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "superhero city"
+    },
+    {
+      "id": "superhero1-2",
+      "description": "Detail image for Metropolis Guardian",
+      "imageUrl": "https://images.unsplash.com/photo-1595367864489-d2a4e1663257?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxoZXJvJTIwc2t5bGluZXxlbnwwfHx8fDE3NTkwNTY1OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hero skyline"
+    },
+    {
+      "id": "evo1-1",
+      "description": "Main image for Evo X Abstract",
+      "imageUrl": "https://images.unsplash.com/photo-1742412616035-fdd64c6ebce9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMHJhY2VjYXJ8ZW58MHx8fHwxNzU5MDU2NTk0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract racecar"
+    },
+    {
+      "id": "custom1-1",
+      "description": "Main image for Your Custom Moment",
+      "imageUrl": "https://images.unsplash.com/photo-1714229725928-407bdcb18826?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cGhvdG8lMjBmcmFtZXxlbnwwfHx8fDE3NTg5NjU3MjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "photo frame"
+    },
+    {
+      "id": "car2-1",
+      "description": "Main image for Midnight Touge Run",
+      "imageUrl": "https://images.unsplash.com/photo-1753480864888-0a5750294958?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxuaWdodCUyMHJhY2luZ3xlbnwwfHx8fDE3NTkwNTY1OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "night racing"
+    },
+    {
+      "id": "anime2-1",
+      "description": "Main image for Samurai Soul",
+      "imageUrl": "https://images.unsplash.com/photo-1692480127627-099bdc97b078?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzYW11cmFpJTIwY2hlcnJ5fGVufDB8fHx8MTc1OTA1NjU5NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "samurai cherry"
+    },
+    {
+      "id": "superhero2-1",
+      "description": "Main image for Vigilante of the Night",
+      "imageUrl": "https://images.unsplash.com/photo-1536818968680-deeec2e9fd11?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxkYXJrJTIwaGVyb3xlbnwwfHx8fDE3NTkwNTY1OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dark hero"
+    },
+    {
+      "id": "evo2-1",
+      "description": "Main image for Cyberpunk Cityscape",
+      "imageUrl": "https://images.unsplash.com/photo-1707999464758-0ad86b14290f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjeWJlcnB1bmslMjBjaXR5fGVufDB8fHx8MTc1ODk2ODI1OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cyberpunk city"
+    },
+    {
+      "id": "car3-1",
+      "description": "Main image for Classic Muscle",
+      "imageUrl": "https://images.unsplash.com/photo-1616019459068-4cc6dca4d3a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtdXNjbGUlMjBjYXJ8ZW58MHx8fHwxNzU5MDU1NTgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "muscle car"
+    },
+    {
+      "id": "anime3-1",
+      "description": "Main image for Spirit World Gateway",
+      "imageUrl": "https://images.unsplash.com/photo-1565042081751-14403c3ed907?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxmYW50YXN5JTIwZ2F0ZXxlbnwwfHx8fDE3NTkwNTY1OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fantasy gate"
+    },
+    {
+      "id": "superhero3-1",
+      "description": "Main image for Web-Slinger in Action",
+      "imageUrl": "https://images.unsplash.com/photo-1698864467844-a8e5623827a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzd2luZ2luZyUyMGhlcm98ZW58MHx8fHwxNzU5MDU2NTk0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "swinging hero"
+    },
+    {
+      "id": "category-evo",
+      "description": "Category image for EVO",
+      "imageUrl": "https://images.unsplash.com/photo-1634214564207-0d75d3e4c904?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjYXIlMjBsaWdodHN8ZW58MHx8fHwxNzU5MDU2NTk0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "car lights"
+    },
+    {
+      "id": "category-custom",
+      "description": "Category image for Custom Frames",
+      "imageUrl": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxnYWxsZXJ5JTIwd2FsbHxlbnwwfHx8fDE3NTkwNTY1OTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gallery wall"
+    },
+    {
+      "id": "category-car",
+      "description": "Category image for Cars",
+      "imageUrl": "https://images.unsplash.com/photo-1444947295498-07f60c19a4ff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjYXIlMjB3aGVlbHxlbnwwfHx8fDE3NTkwNTMwNDR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "car wheel"
+    },
+    {
+      "id": "category-anime",
+      "description": "Category image for Anime",
+      "imageUrl": "https://images.unsplash.com/photo-1623252729328-9941b271ad48?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhbmltZSUyMHN0eWxlfGVufDB8fHx8MTc1ODk4Mjc5Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "anime style"
+    },
+    {
+      "id": "category-superhero",
+      "description": "Category image for Superheroes",
+      "imageUrl": "https://images.unsplash.com/photo-1531501410720-c8d437636169?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjb21pYyUyMGJvb2t8ZW58MHx8fHwxNzU5MDU2NTk0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "comic book"
+    }
+  ]
+}
