@@ -10,9 +10,7 @@ export const CATEGORIES: Category[] = [
 
 export const FRAME_OPTIONS: FrameOption[] = [
   { size: 'A4', finish: 'Black', price: 377 },
-  { size: 'A4', finish: 'White', price: 377 },
   { size: 'A3', finish: 'Black', price: 477 },
-  { size: 'A3', finish: 'White', price: 477 },
 ];
 
 export const BUNDLE_DEALS: BundleDeal[] = [

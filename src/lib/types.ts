@@ -1,6 +1,6 @@
 export type Category = 'EVO WALL POSTER & FRAMES' | 'CAR FRAMES AND WALL POSTERS' | 'ANIME FRAMES AND WALLPOSTERS' | 'SUPERHERO FRAMES AND POSTERS' | 'CUSTOM FRAMES';
 
-export type FrameFinish = 'Black' | 'White' | 'Oak' | 'Walnut';
+export type FrameFinish = 'Black' | 'Oak' | 'Walnut';
 export type PosterSize = 'A4' | 'A3';
 export type FrameSize = 'A4' | 'A3';
 

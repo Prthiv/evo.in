@@ -16,7 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Check, Truck, PackagePlus, ShoppingBag } from 'lucide-react';
 import { QuantitySelector } from '@/components/quantity-selector';
 import { useEffect, useState } from 'react';
-import type { Product, SelectedProduct } from '@/lib/types';
+import type { Product, SelectedProduct, FrameFinish } from '@/lib/types';
 
 export function ProductDetailPageClient({ product }: { product: Product }) {
   const router = useRouter();
@@ -109,7 +109,7 @@ export function ProductDetailPageClient({ product }: { product: Product }) {
                 <div className="mt-4 space-y-4">
                   <div>
                     <Label className="font-headline">Finish</Label>
-                     <RadioGroup value={selectedFinish} onValueChange={(v) => setSelectedFinish(v as 'Black' | 'White')} className="flex items-center gap-2 mt-2">
+                     <RadioGroup value={selectedFinish} onValueChange={(v) => setSelectedFinish(v as typeof selectedFinish)} className="flex items-center gap-2 mt-2">
                         {availableFinishes.map(finish => (
                         <div key={finish}>
                           <RadioGroupItem value={finish} id={`finish-${finish}`} className="sr-only"/>
@@ -130,8 +130,12 @@ export function ProductDetailPageClient({ product }: { product: Product }) {
 
           <div className="flex flex-col sm:flex-row gap-4">
             <QuantitySelector quantity={quantity} setQuantity={setQuantity} min={1} />
-            <Button size="lg" className="flex-1" onClick={handleBuyNow}>
-              <ShoppingBag className="mr-2 h-5 w-5" /> Buy Now
+            <Button 
+              size="lg" 
+              className="flex-1 text-base sm:text-xl h-14 sm:h-16 font-bold rounded-lg px-6 py-4" 
+              onClick={handleBuyNow}
+            >
+              <ShoppingBag className="mr-2 h-6 w-6 sm:h-7 sm:w-7" /> Buy Now
             </Button>
           </div>
           
