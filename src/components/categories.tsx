@@ -1,15 +1,13 @@
-
 'use client';
 
 import Link from "next/link";
 import Image from "next/image";
-import { CATEGORIES } from "@/lib/constants";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "./ui/button";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-
+import { CategoryRecord } from "@/lib/types";
 
 const categoryImages: Record<string, string> = {
   'CAR FRAMES AND WALL POSTERS': 'category-car',
@@ -32,11 +30,29 @@ const categoryAnimation: Record<string, string> = {
     'SUPERHERO FRAMES AND POSTERS': 'group-hover:scale-105',
 }
 
-export function Categories({ isProductsPage = false }: { isProductsPage?: boolean }) {
-  const searchParams = useSearchParams();
-  const currentCategory = searchParams.get('category');
+interface CategoriesProps {
+  isProductsPage?: boolean;
+  categories?: CategoryRecord[]; // Optional prop for dynamic categories
+}
 
-  const visibleCategories = CATEGORIES.filter(c => c !== 'EVO WALL POSTER & FRAMES');
+export function Categories({ isProductsPage = false, categories }: CategoriesProps) {
+  // Only use useSearchParams in client components
+  let currentCategory: string | null = null;
+  if (typeof window !== 'undefined') {
+    // This is a workaround to avoid the Suspense boundary issue
+    // In a real app, you'd want to handle this more elegantly
+    try {
+      const searchParams = new URLSearchParams(window.location.search);
+      currentCategory = searchParams.get('category');
+    } catch (e) {
+      // Ignore error in SSR
+    }
+  }
+
+  // Use dynamic categories if provided, otherwise fallback to hardcoded ones
+  const visibleCategories = categories 
+    ? categories.filter(c => c.isVisible).map(c => c.name)
+    : ['CAR FRAMES AND WALL POSTERS', 'ANIME FRAMES AND WALLPOSTERS', 'SUPERHERO FRAMES AND POSTERS'];
 
   if (isProductsPage) {
     return (
@@ -56,7 +72,7 @@ export function Categories({ isProductsPage = false }: { isProductsPage?: boolea
                 className="shrink-0"
                 asChild
             >
-                <Link href={categoryLinks[category] || `/products?category=${encodeURIComponent(category)}`}>
+                <Link href={`/products?category=${encodeURIComponent(category)}`}>
                 {categoryDisplayNames[category] || category}
                 </Link>
             </Button>
@@ -79,7 +95,7 @@ export function Categories({ isProductsPage = false }: { isProductsPage?: boolea
           const imageId = categoryImages[category];
           const image = PlaceHolderImages.find(img => img.id === imageId);
           return (
-            <Link key={category} href={categoryLinks[category] || `/products?category=${encodeURIComponent(category)}`} className="group">
+            <Link key={category} href={`/products?category=${encodeURIComponent(category)}`} className="group">
               <Card className={cn("overflow-hidden relative aspect-video flex items-center justify-center text-center p-4 transition-all duration-300 hover:shadow-primary/20 hover:shadow-xl hover:-translate-y-2 border-0", categoryAnimation[category])}>
                 {image && (
                   <Image
@@ -87,6 +103,7 @@ export function Categories({ isProductsPage = false }: { isProductsPage?: boolea
                     alt={category}
                     data-ai-hint={image.imageHint}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                     className={cn("object-cover transition-transform duration-500 ease-in-out z-0", category === 'SUPERHERO FRAMES AND POSTERS' ? 'group-hover:scale-110' : 'group-hover:scale-125')}
                   />
                 )}
@@ -97,6 +114,7 @@ export function Categories({ isProductsPage = false }: { isProductsPage?: boolea
               </Card>
             </Link>
           )
+
         })}
       </div>
     </section>

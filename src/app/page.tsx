@@ -1,55 +1,45 @@
-
 import { HeroSection } from "@/components/hero-section";
 import { Categories } from "@/components/categories";
-import { Testimonials } from "@/components/testimonials";
-import { ScrollAnimator } from "@/components/scroll-animator";
 import { MegaDeals } from "@/components/mega-deals";
 import { TrendingPosters } from "@/components/trending-posters";
-import { FramesUpsell } from "@/components/frames-upsell";
-import { FooterCTA } from "@/components/footer-cta";
-import { Footer } from "@/components/layout/footer";
 import { ReelsShowcase } from "@/components/reels-showcase";
-import { getAllProducts } from "@/lib/data-async";
+import { FooterCTA } from "@/components/footer-cta";
+import { Testimonials } from "@/components/testimonials";
+import { CuratedBundles } from "@/components/curated-bundles";
+import { getAllProducts, getVisibleCategories, getActiveCuratedBundles } from "@/lib/data-async";
 import { getHomepageSettings } from "@/lib/settings-async";
 import type { HeroSettings, MegaDealSettings } from "@/lib/types";
+import { Suspense } from "react";
 
-export default async function Home() {
-  const allProducts = await getAllProducts();
-  const trendingProducts = allProducts.filter(p => p.isTrending);
-
-  const heroSettings = await getHomepageSettings<HeroSettings>('hero', {
+export default async function HomePage() {
+  const products = await getAllProducts();
+  const categories = await getVisibleCategories();
+  const bundles = await getActiveCuratedBundles();
+  
+  const heroData = await getHomepageSettings<HeroSettings>('hero', {
     headline: 'Art That Defines You',
     subheadline: 'From iconic movie scenes to breathtaking landscapes, find the perfect high-quality posters and frames to express your style.',
     videoUrl: '/snapsave-app_3722314188888151940.mp4'
   });
-
-  const megaDealsSettings = await getHomepageSettings<MegaDealSettings[]>('megaDeals', []);
+  
+  const megaDeals = await getHomepageSettings<MegaDealSettings[]>('megaDeals', []);
   const reels = await getHomepageSettings<any[]>('reels', []);
-
+  
+  // Get trending products (products marked as trending)
+  const trendingProducts = products.filter(product => product.isTrending);
 
   return (
-    <div className="flex flex-col space-y-16 md:space-y-24">
-      <HeroSection settings={heroSettings} />
-      <MegaDeals settings={megaDealsSettings} />
-
-      <ScrollAnimator>
-        <TrendingPosters trendingProducts={trendingProducts} />
-      </ScrollAnimator>
-
-      <ScrollAnimator>
-        <FramesUpsell />
-      </ScrollAnimator>
-      
-      <ScrollAnimator>
-        <Testimonials />
-      </ScrollAnimator>
-
-      <ScrollAnimator>
-        <ReelsShowcase reels={reels} />
-      </ScrollAnimator>
-
+    <div className="min-h-screen">
+      <HeroSection settings={heroData} />
+      <Suspense fallback={<div>Loading categories...</div>}>
+        <Categories categories={categories} />
+      </Suspense>
+      <MegaDeals settings={megaDeals} />
+      <CuratedBundles products={products} bundles={bundles} />
+      <TrendingPosters trendingProducts={trendingProducts} />
+      <ReelsShowcase reels={reels} />
+      <Testimonials />
       <FooterCTA />
-      <Footer />
     </div>
   );
 }

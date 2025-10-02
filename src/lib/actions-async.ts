@@ -391,3 +391,165 @@ export async function updateOrderStatus(orderId: string, status: string) {
         return { success: false, error: 'Failed to update order status.' };
     }
 }
+
+// Import the data functions
+import { 
+  createCategory as createCategoryData,
+  updateCategory as updateCategoryData,
+  deleteCategory as deleteCategoryData,
+  createCuratedBundle as createCuratedBundleData,
+  updateCuratedBundle as updateCuratedBundleData,
+  deleteCuratedBundle as deleteCuratedBundleData
+} from '@/lib/data-async';
+
+// Category management actions
+export async function createCategory(prevState: any, formData: FormData) {
+    const name = formData.get('name') as string;
+    const description = formData.get('description') as string;
+    const imageUrl = formData.get('imageUrl') as string;
+    const isVisible = formData.get('isVisible') === 'on';
+    const sortOrder = parseInt(formData.get('sortOrder') as string) || 0;
+
+    try {
+        const result = await createCategoryData({
+            name,
+            description: description || undefined,
+            imageUrl: imageUrl || undefined,
+            isVisible,
+            sortOrder
+        });
+
+        if (result.success) {
+            revalidatePath('/studio/categories');
+            return { success: true };
+        } else {
+            return { success: false, error: result.error };
+        }
+    } catch (error) {
+        console.error('Failed to create category:', error);
+        return { success: false, error: 'Failed to create category.' };
+    }
+}
+
+export async function updateCategory(prevState: any, formData: FormData) {
+    const id = formData.get('id') as string;
+    const name = formData.get('name') as string;
+    const description = formData.get('description') as string;
+    const imageUrl = formData.get('imageUrl') as string;
+    const isVisible = formData.get('isVisible') === 'on';
+    const sortOrder = parseInt(formData.get('sortOrder') as string) || 0;
+
+    try {
+        const result = await updateCategoryData(id, {
+            name,
+            description: description || undefined,
+            imageUrl: imageUrl || undefined,
+            isVisible,
+            sortOrder
+        });
+
+        if (result.success) {
+            revalidatePath('/studio/categories');
+            return { success: true };
+        } else {
+            return { success: false, error: result.error };
+        }
+    } catch (error) {
+        console.error('Failed to update category:', error);
+        return { success: false, error: 'Failed to update category.' };
+    }
+}
+
+export async function deleteCategoryAction(id: string) {
+    try {
+        const result = await deleteCategoryData(id);
+        
+        if (result.success) {
+            revalidatePath('/studio/categories');
+            return { success: true };
+        } else {
+            return { success: false, error: result.error };
+        }
+    } catch (error) {
+        console.error('Failed to delete category:', error);
+        return { success: false, error: 'Failed to delete category.' };
+    }
+}
+
+// Curated bundle management actions
+export async function createCuratedBundleAction(prevState: any, formData: FormData) {
+    const name = formData.get('name') as string;
+    const description = formData.get('description') as string;
+    const imageUrl = formData.get('imageUrl') as string;
+    const isActive = formData.get('isActive') === 'on';
+    const sortOrder = parseInt(formData.get('sortOrder') as string) || 0;
+    const productIds = JSON.parse(formData.get('productIds') as string) as string[];
+
+    try {
+        const result = await createCuratedBundleData({
+            name,
+            description: description || undefined,
+            imageUrl: imageUrl || undefined,
+            isActive,
+            sortOrder,
+            productIds
+        });
+
+        if (result.success) {
+            revalidatePath('/studio/bundles');
+            return { success: true };
+        } else {
+            return { success: false, error: result.error };
+        }
+    } catch (error) {
+        console.error('Failed to create curated bundle:', error);
+        return { success: false, error: 'Failed to create curated bundle.' };
+    }
+}
+
+export async function updateCuratedBundleAction(prevState: any, formData: FormData) {
+    const id = formData.get('id') as string;
+    const name = formData.get('name') as string;
+    const description = formData.get('description') as string;
+    const imageUrl = formData.get('imageUrl') as string;
+    const isActive = formData.get('isActive') === 'on';
+    const sortOrder = parseInt(formData.get('sortOrder') as string) || 0;
+    const productIds = JSON.parse(formData.get('productIds') as string) as string[];
+
+    try {
+        const result = await updateCuratedBundleData(id, {
+            name,
+            description: description || undefined,
+            imageUrl: imageUrl || undefined,
+            isActive,
+            sortOrder,
+            productIds
+        });
+
+        if (result.success) {
+            revalidatePath('/studio/bundles');
+            return { success: true };
+        } else {
+            return { success: false, error: result.error };
+        }
+    } catch (error) {
+        console.error('Failed to update curated bundle:', error);
+        return { success: false, error: 'Failed to update curated bundle.' };
+    }
+}
+
+export async function deleteCuratedBundleAction(id: string) {
+    try {
+        const result = await deleteCuratedBundleData(id);
+        
+        if (result.success) {
+            revalidatePath('/studio/bundles');
+            return { success: true };
+        } else {
+            return { success: false, error: result.error };
+        }
+    } catch (error) {
+        console.error('Failed to delete curated bundle:', error);
+        return { success: false, error: 'Failed to delete curated bundle.' };
+    }
+}

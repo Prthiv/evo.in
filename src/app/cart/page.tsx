@@ -1,16 +1,17 @@
-
 'use client'
 
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
-import { CreditCard, ShoppingCart, Pencil, PackagePlus, AlertTriangle, BadgePercent, Trash2 } from "lucide-react";
+import { CreditCard, ShoppingCart, Pencil, PackagePlus, AlertTriangle, BadgePercent, Trash2, Tag } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { MIN_ORDER_QUANTITY } from "@/lib/constants";
+import { useState, useEffect } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,10 +25,47 @@ import {
 } from "@/components/ui/alert-dialog"
 
 export default function CartPage() {
-  const { bundles, total, bundleCount, subtotal, totalDiscount, clearCart, appliedDeal, removeBundle } = useCart();
+  const { 
+    bundles, 
+    total, 
+    bundleCount, 
+    subtotal, 
+    totalDiscount, 
+    clearCart, 
+    appliedDeal, 
+    removeBundle,
+    // New pricing properties
+    finalTotal,
+    appliedRules,
+    ruleDiscount,
+    couponDiscount,
+    couponCode,
+    setCouponCode,
+    pricingLoading,
+    calculatePricingWithCoupon
+  } = useCart();
   
+  const [couponInput, setCouponInput] = useState(couponCode || '');
   const minOrderPerBundle = bundles.some(bundle => bundle.items.length < MIN_ORDER_QUANTITY);
   
+  useEffect(() => {
+    if (couponCode) {
+      setCouponInput(couponCode);
+    }
+  }, [couponCode]);
+  
+  const handleApplyCoupon = async () => {
+    if (couponInput.trim()) {
+      await calculatePricingWithCoupon(couponInput);
+    }
+  };
+  
+  const handleRemoveCoupon = async () => {
+    setCouponCode(null);
+    setCouponInput('');
+    await calculatePricingWithCoupon();
+  };
+
   return (
     <div className="container py-12">
       <div className="mb-8 flex justify-between items-center">
@@ -157,24 +195,66 @@ export default function CartPage() {
                   <span>Subtotal</span>
                   <span>₹{subtotal.toFixed(2)}</span>
                 </div>
+                
                 {totalDiscount > 0 && (
                     <div className="flex justify-between text-primary">
                         <span>Bundle Discounts</span>
                         <span>-₹{totalDiscount.toFixed(2)}</span>
                     </div>
                 )}
+                
+                {ruleDiscount > 0 && (
+                    <div className="flex justify-between text-primary">
+                        <span>Special Offers</span>
+                        <span>-₹{ruleDiscount.toFixed(2)}</span>
+                    </div>
+                )}
+                
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input 
+                      placeholder="Coupon code" 
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value)}
+                      disabled={!!couponCode || pricingLoading}
+                    />
+                    {couponCode ? (
+                      <Button variant="outline" onClick={handleRemoveCoupon} disabled={pricingLoading}>
+                        Remove
+                      </Button>
+                    ) : (
+                      <Button onClick={handleApplyCoupon} disabled={!couponInput.trim() || pricingLoading}>
+                        {pricingLoading ? 'Applying...' : 'Apply'}
+                      </Button>
+                    )}
+                  </div>
+                  
+                  {couponCode && (
+                    <div className="flex justify-between text-primary">
+                      <div className="flex items-center gap-1">
+                        <Tag className="h-4 w-4" />
+                        <span>Coupon ({couponCode})</span>
+                      </div>
+                      <span>-₹{couponDiscount.toFixed(2)}</span>
+                    </div>
+                  )}
+                </div>
+                
                 <div className="flex justify-between">
                   <span>Shipping</span>
                   <span>Calculated at checkout</span>
                 </div>
-                 <div className="flex justify-between">
+                
+                <div className="flex justify-between">
                   <span>Taxes</span>
                   <span>Calculated at checkout</span>
                 </div>
+                
                 <Separator />
+                
                 <div className="flex justify-between font-bold text-lg">
                   <span>Grand Total</span>
-                  <span>₹{total.toFixed(2)}</span>
+                  <span>₹{finalTotal.toFixed(2)}</span>
                 </div>
               </CardContent>
               <CardFooter>

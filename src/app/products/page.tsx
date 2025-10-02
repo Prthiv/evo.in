@@ -1,61 +1,43 @@
+import { getAllProducts, getVisibleCategories } from "@/lib/data-async";
+import { ProductCard } from "@/components/product-card";
+import { Categories } from "@/components/categories";
+import { Suspense } from "react";
 
-import { getAllProducts } from '@/lib/data-async';
-import { Categories } from '@/components/categories';
-import { CuratedBundles } from '@/components/curated-bundles';
-import { ProductCard } from '@/components/product-card';
-import { SelectionTray } from '@/components/selection-tray';
-
-export const revalidate = 0;
-
-export default async function ProductsPage({
-  searchParams,
-}: {
-  searchParams?: { category?: string };
-}) {
-  const resolvedSearchParams = searchParams;
-  const currentCategory = resolvedSearchParams?.category;
-  const allProducts = await getAllProducts();
-
-  const filteredProducts = currentCategory
-    ? allProducts.filter((p) => p.category === currentCategory)
-    : allProducts;
-
-  const isAllProductsPage = !currentCategory;
+export default async function ProductsPage({ searchParams }: { searchParams: { category?: string } }) {
+  const products = await getAllProducts();
+  const categories = await getVisibleCategories();
+  
+  const filteredProducts = searchParams.category 
+    ? products.filter(product => product.category === searchParams.category)
+    : products;
 
   return (
     <div className="container py-8">
-      <header className="mb-8 text-center">
-        <h1 className="text-4xl font-bold font-headline tracking-tight sm:text-5xl">
-          {currentCategory?.replace(/ FRAMES AND WALLPOSTERS| FRAMES AND POSTERS/g, "") || "All Products"}
-        </h1>
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold font-headline">Our Products</h1>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-          Discover our curated collection of high-quality posters and frames. Select at least 6 to build your bundle.
+          Discover our premium collection of posters and frames.
         </p>
-      </header>
+      </div>
       
-      <Categories isProductsPage={true} />
-
-      {isAllProductsPage && (
-        <div className="my-12">
-            <CuratedBundles products={allProducts} />
-        </div>
-      )}
-
-      {filteredProducts.length > 0 ? (
-        <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-4">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-16">
-          <h2 className="text-2xl font-headline">No Products Found</h2>
+      <Suspense fallback={<div>Loading categories...</div>}>
+        <Categories isProductsPage={true} categories={categories} />
+      </Suspense>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredProducts.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+      
+      {filteredProducts.length === 0 && (
+        <div className="text-center py-12">
+          <h3 className="text-xl font-medium">No products found</h3>
           <p className="text-muted-foreground mt-2">
-            There are no products available in this category.
+            Try selecting a different category or check back later.
           </p>
         </div>
       )}
-      <SelectionTray />
     </div>
   );
 }

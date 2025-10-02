@@ -1,5 +1,3 @@
-
-
 export type Category = 'EVO WALL POSTER & FRAMES' | 'CAR FRAMES AND WALL POSTERS' | 'ANIME FRAMES AND WALLPOSTERS' | 'SUPERHERO FRAMES AND POSTERS' | 'CUSTOM FRAMES';
 
 export type FrameFinish = 'Black' | 'White' | 'Oak' | 'Walnut';
@@ -64,6 +62,19 @@ export interface CartBundle {
     total: number;
     discount: number;
     appliedDeal: BundleDeal | null;
+    // Add pricing rule information
+    appliedPricingRules?: AppliedPricingRule[];
+    couponCode?: string;
+    couponDiscount?: number;
+}
+
+export interface AppliedPricingRule {
+    id: string;
+    name: string;
+    description?: string;
+    ruleType: 'percentage_discount' | 'fixed_amount' | 'buy_x_get_y' | 'free_shipping';
+    value?: number;
+    discountAmount: number;
 }
 
 export type OrderStatus = 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
@@ -83,6 +94,69 @@ export interface BundleDeal {
   buy: number;
   get: number;
   total: number;
+}
+
+// Add new interfaces for pricing rules and coupons
+export interface PricingRule {
+  id: string;
+  name: string;
+  description?: string;
+  ruleType: 'percentage_discount' | 'fixed_amount' | 'buy_x_get_y' | 'free_shipping';
+  value?: number; // discount percentage or fixed amount
+  targetType: 'cart' | 'product' | 'category' | 'bundle';
+  targetValue?: string[]; // specific product IDs, category names, or bundle IDs
+  minOrderValue?: number; // minimum order value for the rule to apply
+  startDate?: string;
+  endDate?: string;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface Coupon {
+  id: string;
+  code: string;
+  description?: string;
+  discountType: 'percentage' | 'fixed_amount';
+  discountValue: number;
+  minOrderValue?: number; // minimum order value for coupon to apply
+  usageLimit?: number; // maximum number of times this coupon can be used
+  usedCount: number;
+  startDate?: string;
+  endDate?: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface PricingRuleFromDB {
+  id: number;
+  name: string;
+  description?: string;
+  ruleType: 'percentage_discount' | 'fixed_amount' | 'buy_x_get_y' | 'free_shipping';
+  value?: number;
+  targetType: 'cart' | 'product' | 'category' | 'bundle';
+  targetValue?: string; // JSON string of target values
+  minOrderValue?: number;
+  startDate?: string;
+  endDate?: string;
+  isActive: 0 | 1;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface CouponFromDB {
+  id: number;
+  code: string;
+  description?: string;
+  discountType: 'percentage' | 'fixed_amount';
+  discountValue: number;
+  minOrderValue?: number;
+  usageLimit?: number;
+  usedCount: number;
+  startDate?: string;
+  endDate?: string;
+  isActive: 0 | 1;
+  createdAt: string;
 }
 
 export interface ProductFromDB {
@@ -110,6 +184,52 @@ export interface OrderFromDB {
     createdAt: string;
 }
 
+// Add new interfaces for categories and curated bundles
+export interface CategoryRecord {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  imageUrl?: string;
+  isVisible: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface CuratedBundle {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  productIds: string[]; // Array of product IDs
+  imageUrl?: string;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface CategoryFromDB {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  imageUrl?: string;
+  isVisible: 0 | 1;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface CuratedBundleFromDB {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  productIds: string; // JSON string of product IDs
+  imageUrl?: string;
+  isActive: 0 | 1;
+  sortOrder: number;
+  createdAt: string;
+}
 
 // --- Homepage Settings Types ---
 

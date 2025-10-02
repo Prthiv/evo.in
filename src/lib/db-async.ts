@@ -2,7 +2,7 @@ import 'server-only'
 import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs/promises';
-import { BUNDLE_DEALS } from './constants';
+import { BUNDLE_DEALS, CATEGORIES } from './constants';
 
 const dbPath = path.join(process.cwd(), 'evo.db');
 
@@ -71,6 +71,35 @@ class DatabaseManager {
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    // Create categories table
+    db.exec(`
+    CREATE TABLE IF NOT EXISTS categories (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE,
+      slug TEXT NOT NULL UNIQUE,
+      description TEXT,
+      imageUrl TEXT,
+      isVisible BOOLEAN NOT NULL DEFAULT 1,
+      sortOrder INTEGER NOT NULL DEFAULT 0,
+      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    `);
+
+    // Create curated_bundles table
+    db.exec(`
+    CREATE TABLE IF NOT EXISTS curated_bundles (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      slug TEXT NOT NULL UNIQUE,
+      description TEXT,
+      productIds TEXT NOT NULL, -- JSON array of product IDs
+      imageUrl TEXT,
+      isActive BOOLEAN NOT NULL DEFAULT 1,
+      sortOrder INTEGER NOT NULL DEFAULT 0,
+      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    `);
   }
 
   private async seedInitialData() {
@@ -108,6 +137,39 @@ class DatabaseManager {
       }
       
       console.log('Homepage settings seeded successfully.');
+    }
+
+    // Seed categories if table is empty
+    const categoriesCount = (db.prepare('SELECT COUNT(*) as count FROM categories').get() as { count: number }).count;
+    if (categoriesCount === 0) {
+      console.log('Seeding database with initial categories...');
+      const defaultCategories = CATEGORIES.map((category, index) => ({
+        name: category,
+        slug: category.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        description: `Products in the ${category} category`,
+        isVisible: true,
+        sortOrder: index
+      }));
+
+      const insertCategory = db.prepare(`
+        INSERT INTO categories (name, slug, description, isVisible, sortOrder)
+        VALUES (?, ?, ?, ?, ?)
+      `);
+
+      try {
+        for (const category of defaultCategories) {
+          insertCategory.run(
+            category.name,
+            category.slug,
+            category.description,
+            category.isVisible ? 1 : 0,
+            category.sortOrder
+          );
+        }
+        console.log('Categories seeded successfully.');
+      } catch (err) {
+        console.error('Categories seeding failed:', err);
+      }
     }
   }
 

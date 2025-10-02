@@ -1,9 +1,8 @@
-
 'use client';
 
 import Link from 'next/link';
 import { ShoppingCart, User, Search, Menu, X, Loader2 } from 'lucide-react';
-import { useCart } from '@/hooks/use-cart.tsx';
+import { useCart } from '@/hooks/use-cart';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -16,6 +15,7 @@ import type { Product } from '@/lib/types';
 import Image from 'next/image';
 import { Separator } from '../ui/separator';
 import React from 'react';
+import { usePathname } from 'next/navigation';
 
 const navLinks = [
   { href: '/products', label: 'All Products' },
@@ -119,9 +119,15 @@ function SearchDialog() {
 }
 
 export function Header() {
+  const pathname = usePathname();
   const { itemsCount } = useCart();
   const isMobile = useIsMobile();
   const [isMenuOpen, setMenuOpen] = useState(false);
+
+  // Hide header in studio area
+  if (pathname?.startsWith('/studio')) {
+    return null;
+  }
 
   const navContent = (
     <>

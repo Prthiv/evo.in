@@ -111,7 +111,13 @@ export function CustomItemEditor({
                             <FormControl>
                                 {item.preview ? (
                                 <div className="relative aspect-square w-full rounded-md border overflow-hidden">
-                                    <Image src={item.preview} alt={`Preview ${index + 1}`} fill className="object-contain" />
+                                    <Image 
+                                       src={item.preview} 
+                                       alt={`Preview ${index + 1}`} 
+                                       fill 
+                                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                       className="object-contain" 
+                                     />
                                     <Button
                                     type="button"
                                     variant="destructive"

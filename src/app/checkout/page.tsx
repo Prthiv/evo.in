@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import { CreditCard, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Separator } from '@/components/ui/separator';
 
 type FieldErrors = {
   email?: string[];
@@ -40,7 +41,7 @@ function SubmitButton() {
 }
 
 export default function CheckoutPage() {
-  const { itemsCount, bundles, total, clearCart } = useCart();
+  const { itemsCount, bundles, total, finalTotal, clearCart, couponCode } = useCart();
   const router = useRouter();
   const [state, formAction] = useActionState<SubmitOrderState, FormData>(submitOrder, { errors: {} });
   const [paymentMethod, setPaymentMethod] = useState('phonepe');
@@ -70,7 +71,8 @@ export default function CheckoutPage() {
     <div className="container flex justify-center py-12">
       <form action={formAction} className="w-full max-w-lg">
         <input type="hidden" name="cartItems" value={JSON.stringify(bundles)} />
-        <input type="hidden" name="total" value={total} />
+        <input type="hidden" name="total" value={finalTotal} />
+        {couponCode && <input type="hidden" name="couponCode" value={couponCode} />}
 
         <Card>
           <CardHeader>
@@ -110,6 +112,34 @@ export default function CheckoutPage() {
               </RadioGroup>
               {state.errors && 'paymentMethod' in state.errors && state.errors.paymentMethod && <p className="text-sm text-destructive">{state.errors.paymentMethod[0]}</p>}
             </div>
+
+            {/* Order Summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Order Summary</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span>₹{total.toFixed(2)}</span>
+                </div>
+                {couponCode && (
+                  <div className="flex justify-between text-primary">
+                    <span>Coupon ({couponCode})</span>
+                    <span>-₹{(total - finalTotal).toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span>Shipping</span>
+                  <span>FREE</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between font-bold">
+                  <span>Total</span>
+                  <span>₹{finalTotal.toFixed(2)}</span>
+                </div>
+              </CardContent>
+            </Card>
 
              {state.errors && 'form' in state.errors && state.errors.form && (
                 <Alert variant="destructive">

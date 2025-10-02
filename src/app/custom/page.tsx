@@ -85,6 +85,7 @@ export default function CustomPage() {
         previewUrl: item.preview,
         posterSize: item.size,
         isFramed: item.productType === 'framed',
+        quantity: 1
     }));
 
     addCustomBundleToCart(customItems);
@@ -176,7 +177,14 @@ export default function CustomPage() {
                     onClick={() => setEditingIndex(index)}
                   >
                     {item.preview ? (
-                      <Image src={item.preview} alt={`Custom Item ${index + 1}`} fill className="object-cover rounded-md" />
+                      <Image 
+                        src={item.preview} 
+                        alt={`Custom Item ${index + 1}`} 
+                        fill 
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover rounded-md" 
+                      />
+
                     ) : (
                       <div className="text-center text-muted-foreground p-2">
                         <UploadCloud className="h-10 w-10 mx-auto mb-2" />

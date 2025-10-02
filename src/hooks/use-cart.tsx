@@ -1,9 +1,9 @@
-
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import type { CartItem, Product, FrameOption, PosterSize, CartBundle, BundleDeal, CustomCartItemInput, SelectedProduct } from '@/lib/types';
 import { BUNDLE_DEALS, MIN_ORDER_QUANTITY, POSTER_SIZES, FRAME_OPTIONS } from '@/lib/constants';
+import { usePricing } from './use-pricing';
 
 interface CartContextType {
   bundles: CartBundle[];
@@ -20,6 +20,15 @@ interface CartContextType {
   totalDiscount: number;
   isMinOrderMet: boolean;
   appliedDeal: BundleDeal | null;
+  // New pricing properties
+  finalTotal: number;
+  appliedRules: any[];
+  ruleDiscount: number;
+  couponDiscount: number;
+  couponCode: string | null;
+  setCouponCode: (code: string | null) => void;
+  pricingLoading: boolean;
+  calculatePricingWithCoupon: (code?: string) => Promise<any>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -74,9 +83,18 @@ const calculateBundle = (items: CartItem[]) => {
   return { items: itemsWithStatus, subtotal, total, discount, appliedDeal };
 };
 
-
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [bundles, setBundles] = useState<CartBundle[]>([]);
+  const [couponCode, setCouponCodeState] = useState<string | null>(null);
+  const { 
+    finalTotal, 
+    appliedRules, 
+    ruleDiscount, 
+    couponDiscount, 
+    coupon, 
+    loading: pricingLoading,
+    calculatePricingWithCoupon
+  } = usePricing(bundles);
 
   useEffect(() => {
     const storedCart = localStorage.getItem('evo.in-cart-bundles');
@@ -93,6 +111,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     localStorage.setItem('evo.in-cart-bundles', JSON.stringify(bundles));
   }, [bundles]);
+
+  const setCouponCode = (code: string | null) => {
+    setCouponCodeState(code);
+    if (code) {
+      calculatePricingWithCoupon(code);
+    } else {
+      calculatePricingWithCoupon();
+    }
+  };
 
   const addBundleToCart = (products: SelectedProduct[], posterSize: PosterSize, frame?: FrameOption) => {
     setBundles(prevBundles => {
@@ -149,8 +176,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const newBundle: CartBundle = { id: bundleId, name, items, subtotal, total, discount, appliedDeal };
         return [...prevBundles, newBundle];
     });
-};
-
+  };
 
   const updateBundle = (bundleId: string, products: SelectedProduct[], posterSize: PosterSize, frame?: FrameOption) => {
     setBundles(prevBundles => {
@@ -180,12 +206,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearCart = () => {
     setBundles([]);
+    setCouponCodeState(null);
   };
 
   const getBundleById = (bundleId: string) => {
     return bundles.find(b => b.id === bundleId);
   }
 
+  // Calculate base totals for the cart
   const { subtotal, total, totalDiscount, itemsCount, appliedDeal } = useMemo(() => {
     const totals = bundles.reduce((acc, bundle) => {
         acc.subtotal += bundle.subtotal;
@@ -221,7 +249,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         total,
         totalDiscount, 
         isMinOrderMet,
-        appliedDeal
+        appliedDeal,
+        // New pricing values
+        finalTotal,
+        appliedRules,
+        ruleDiscount,
+        couponDiscount,
+        couponCode,
+        setCouponCode,
+        pricingLoading,
+        calculatePricingWithCoupon
     }}>
       {children}
     </CartContext.Provider>

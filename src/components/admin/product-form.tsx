@@ -23,13 +23,15 @@ import { useDropzone } from 'react-dropzone';
 import { cn } from '@/lib/utils';
 import { Checkbox } from '../ui/checkbox';
 
+// Convert Category enum to string array for Zod enum validation
+const CATEGORIES_LIST = CATEGORIES.map(category => category) as [string, ...string[]];
 
 const productFormSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(3, 'Name must be at least 3 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   price: z.coerce.number().min(0.01, 'Price must be greater than 0'),
-  category: z.enum(CATEGORIES),
+  category: z.enum(CATEGORIES_LIST),
   stock: z.coerce.number().int().min(0, 'Stock cannot be negative'),
   tags: z.string().optional(),
   isTrending: z.boolean().default(false),
@@ -53,7 +55,7 @@ function SubmitButton({ isEditing }: { isEditing: boolean }) {
 
 export function ProductForm({ product }: ProductFormProps) {
   const router = useRouter();
-  const [state, formAction] = useActionState(upsertProduct, { errors: {} });
+  const [state, formAction] = useActionState<any, FormData>(upsertProduct, { errors: {} });
   const [isGenerating, setIsGenerating] = useState(false);
   const isEditing = !!product;
   
@@ -75,12 +77,19 @@ export function ProductForm({ product }: ProductFormProps) {
   });
 
   useEffect(() => {
-    if (state.errors) {
+    if (state?.errors) {
+      const validFields = ['id', 'name', 'description', 'category', 'price', 'stock', 'tags', 'isTrending'];
+      
       Object.keys(state.errors).forEach((key) => {
-        const field = key as keyof ProductFormValues;
-        const message = state.errors[field]?.[0]
-        if (message) {
-          form.setError(field, { type: 'manual', message });
+        // Skip newImages and form errors as they're handled separately
+        if (key === 'newImages' || key === 'form') return;
+        
+        // Only process valid field names
+        if (validFields.includes(key)) {
+          const messages = state.errors[key];
+          if (messages && messages.length > 0) {
+            form.setError(key as keyof ProductFormValues, { type: 'manual', message: messages[0] });
+          }
         }
       });
     }
@@ -184,47 +193,62 @@ export function ProductForm({ product }: ProductFormProps) {
         <FormItem>
             <FormLabel>Product Images</FormLabel>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
-                 {existingImageUrls.map((url) => (
-                    <div key={url} className="relative aspect-square group">
-                        <Image src={url} alt="Product image" fill className="object-cover rounded-md border" />
-                        <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => removeExistingImage(url)}
-                        >
-                            <X className="h-4 w-4" />
-                        </Button>
+                     {existingImageUrls.map((url) => (
+                        <div key={url} className="relative aspect-square group">
+                            <Image 
+                              src={url} 
+                              alt="Product image" 
+                              fill 
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                              className="object-cover rounded-md border" 
+                            />
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                className="absolute -top-2 -right-2 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => removeExistingImage(url)}
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </div>
+                     ))}
+                     {imageFiles.map((file, index) => (
+                        <div key={file.name} className="relative aspect-square group">
+                            <Image 
+                              src={URL.createObjectURL(file)} 
+                              alt="Product image" 
+                              fill 
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                              className="object-cover rounded-md border" 
+                            />
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                className="absolute -top-2 -right-2 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => removeNewImage(index)}
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </div>
+                     ))}
+                     <div
+                        {...getRootProps()}
+                        className={cn(
+                        'aspect-square w-full rounded-md border-2 border-dashed flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary transition-colors',
+                        isDragActive && 'border-primary bg-primary/10'
+                        )}
+                    >
+                        <input {...getInputProps({ name: 'newImages' })} />
+                        <UploadCloud className="h-8 w-8 text-muted-foreground mb-2" />
+                        <p className="text-sm">Add images</p>
                     </div>
-                 ))}
-                 {imageFiles.map((file, index) => (
-                    <div key={file.name} className="relative aspect-square group">
-                        <Image src={URL.createObjectURL(file)} alt="Product image" fill className="object-cover rounded-md border" />
-                        <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => removeNewImage(index)}
-                        >
-                            <X className="h-4 w-4" />
-                        </Button>
-                    </div>
-                 ))}
-                 <div
-                    {...getRootProps()}
-                    className={cn(
-                    'aspect-square w-full rounded-md border-2 border-dashed flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary transition-colors',
-                    isDragActive && 'border-primary bg-primary/10'
-                    )}
-                >
-                    <input {...getInputProps({ name: 'newImages' })} />
-                    <UploadCloud className="h-8 w-8 text-muted-foreground mb-2" />
-                    <p className="text-sm">Add images</p>
                 </div>
-            </div>
-            {state?.errors?.newImages && <p className="text-sm font-medium text-destructive">{state.errors.newImages[0]}</p>}
+                {state?.errors?.newImages && Array.isArray(state.errors.newImages) && state.errors.newImages.length > 0 && (
+                  <p className="text-sm font-medium text-destructive">{state.errors.newImages[0]}</p>
+                )}
+
         </FormItem>
 
         <FormField
