@@ -44,7 +44,7 @@ export default function CheckoutPage() {
   const { itemsCount, bundles, total, finalTotal, clearCart, couponCode } = useCart();
   const router = useRouter();
   const [state, formAction] = useActionState<SubmitOrderState, FormData>(submitOrder, { errors: {} });
-  const [paymentMethod, setPaymentMethod] = useState('phonepe');
+  const [paymentMethod, setPaymentMethod] = useState('razorpay');
 
   useEffect(() => {
     if (itemsCount === 0) {
@@ -106,8 +106,8 @@ export default function CheckoutPage() {
                 <Label
                   className="flex items-center space-x-3 rounded-md border p-4 cursor-pointer has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary"
                 >
-                  <RadioGroupItem value="phonepe" id="phonepe" />
-                  <span className="font-medium">PhonePe</span>
+                  <RadioGroupItem value="razorpay" id="razorpay" />
+                  <span className="font-medium">Razorpay (UPI, Cards, Wallets)</span>
                 </Label>
               </RadioGroup>
               {state.errors && 'paymentMethod' in state.errors && state.errors.paymentMethod && <p className="text-sm text-destructive">{state.errors.paymentMethod[0]}</p>}

@@ -1,27 +1,31 @@
 'use server'
 
-import { z } from 'zod'
-import { redirect } from 'next/navigation'
-import { revalidatePath } from 'next/cache'
-import { db } from '@/lib/db'
-import fs from 'node:fs/promises'
-import path from 'node:path'
-import { updateHomepageSettings } from './settings'
+import { db } from '@/lib/db';
+import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 import crypto from 'crypto';
 import axios from 'axios';
+import Razorpay from 'razorpay';
+import path from 'path';
+import fs from 'fs/promises';
+import { updateHomepageSettings } from '@/lib/settings';
 
-const PHONEPE_HOST = process.env.PHONEPE_HOST || "https://api-preprod.phonepe.com/apis/pg-sandbox";
-const MERCHANT_ID = process.env.PHONEPE_MERCHANT_ID || "PGTESTPAYUAT";
-const SALT_KEY = process.env.PHONEPE_SALT_KEY || "96434309-7796-489d-8924-ab56988a6076";
-const SALT_INDEX = process.env.PHONEPE_SALT_INDEX || "1";
+
+
+// Razorpay configuration
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder',
+  key_secret: process.env.RAZORPAY_KEY_SECRET || 'placeholder_secret',
+});
 
 const checkoutSchema = z.object({
-    email: z.string().email({ message: 'Please enter a valid email address.'}),
-    shippingAddress: z.string().min(10, 'Please enter a complete shipping address.'),
-    paymentMethod: z.enum(['upi', 'phonepe']),
-    cartItems: z.string().min(1, 'Cart cannot be empty.'),
-    total: z.coerce.number().min(0.01, 'Total must be valid.'),
-})
+  email: z.string().email(),
+  shippingAddress: z.string().min(10),
+  paymentMethod: z.enum(['upi', 'razorpay']),
+  cartItems: z.string(),
+  total: z.string(),
+});
 
 export async function submitOrder(prevState: any, formData: FormData) {
     const validatedFields = checkoutSchema.safeParse({
@@ -55,52 +59,23 @@ export async function submitOrder(prevState: any, formData: FormData) {
     
     if (paymentMethod === 'upi') {
         redirect(`/checkout/upi/${orderId}`);
-    } else if (paymentMethod === 'phonepe') {
+    } else if (paymentMethod === 'razorpay') {
         try {
-            const merchantTransactionId = `MT-${orderId}`;
-            const normalPayLoad = {
-                merchantId: MERCHANT_ID,
-                merchantTransactionId: merchantTransactionId,
-                merchantUserId: `MUID-${orderId}`,
-                amount: Math.round(total * 100), // amount in paise
-                redirectUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/phonepe-callback?orderId=${orderId}`,
-                redirectMode: "REDIRECT",
-                callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/phonepe-callback?orderId=${orderId}`,
-                mobileNumber: "9999999999", // Placeholder, ideally from user data
-                paymentInstrument: {
-                    type: "PAY_PAGE",
-                },
+            // Create Razorpay order
+            const options = {
+                amount: Math.round(parseFloat(total) * 100), // amount in the smallest currency unit (paise for INR)
+                currency: "INR",
+                receipt: orderId,
             };
-
-            const payload = Buffer.from(JSON.stringify(normalPayLoad)).toString("base64");
-            const checksum =
-                crypto.createHash("sha256").update(payload + "/pg/v1/pay" + SALT_KEY).digest("hex") +
-                "###" +
-                SALT_INDEX;
-
-            const response = await axios.post(
-                `${PHONEPE_HOST}/pg/v1/pay`,
-                { request: payload },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-VERIFY": checksum,
-                    },
-                }
-            );
             
-            if (response.data.success) {
-                redirect(response.data.data.instrumentResponse.redirectInfo.url);
-            } else {
-                console.error("PhonePe API error:", response.data);
-                return {
-                    errors: { form: ['PhonePe payment initiation failed. Please try again.'] }
-                };
-            }
-        } catch (phonepeError) {
-            console.error('PhonePe integration error:', phonepeError);
+            const order = await razorpay.orders.create(options);
+            
+            // Redirect to frontend with Razorpay order ID
+            redirect(`/checkout/razorpay/${orderId}?razorpay_order_id=${order.id}`);
+        } catch (razorpayError) {
+            console.error('Razorpay integration error:', razorpayError);
             return {
-                errors: { form: ['An error occurred during PhonePe payment. Please try again.'] }
+                errors: { form: ['An error occurred during Razorpay payment. Please try again.'] }
             };
         }
     }

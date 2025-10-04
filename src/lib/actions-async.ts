@@ -19,12 +19,12 @@ import {
 } from './settings-async'
 
 const checkoutSchema = z.object({
-    email: z.string().email({ message: 'Please enter a valid email address.'}),
-    shippingAddress: z.string().min(10, 'Please enter a complete shipping address.'),
-    paymentMethod: z.enum(['upi', 'phonepe']),
-    cartItems: z.string().min(1, 'Cart cannot be empty.'),
-    total: z.coerce.number().min(0.01, 'Total must be valid.'),
-})
+  email: z.string().email(),
+  shippingAddress: z.string().min(10),
+  paymentMethod: z.enum(['upi', 'razorpay']),
+  cartItems: z.string(),
+  total: z.string(),
+});
 
 export async function submitOrder(prevState: any, formData: FormData) {
     const validatedFields = checkoutSchema.safeParse({

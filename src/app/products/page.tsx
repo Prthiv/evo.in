@@ -3,16 +3,16 @@ import { ProductCard } from "@/components/product-card";
 import { Categories } from "@/components/categories";
 import { Suspense } from "react";
 
-export default async function ProductsPage({ searchParams }: { searchParams: { category?: string } }) {
+async function ProductsContent({ category }: { category?: string }) {
   const products = await getAllProducts();
   const categories = await getVisibleCategories();
   
-  const filteredProducts = searchParams.category 
-    ? products.filter(product => product.category === searchParams.category)
+  const filteredProducts = category 
+    ? products.filter(product => product.category === category)
     : products;
 
   return (
-    <div className="container py-8">
+    <>
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold font-headline">Our Products</h1>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
@@ -38,6 +38,16 @@ export default async function ProductsPage({ searchParams }: { searchParams: { c
           </p>
         </div>
       )}
+    </>
+  );
+}
+
+export default async function ProductsPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+  const { category } = await searchParams;
+  
+  return (
+    <div className="container py-8">
+      <ProductsContent category={category} />
     </div>
   );
 }
